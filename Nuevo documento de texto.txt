@@ -1,0 +1,25 @@
+Usuario
+- nombre: str
+- email: str
+- carpetas: dict
++ enviar_mensaje()
++ recibir_mensaje()
++ listar_mensajes()
+
+Mensaje
+- remitente: str
+- destinatario: str
+- asunto: str
+- cuerpo: str
++ resumen()
+
+Carpeta
+- nombre: str
+- mensajes: list
++ agregar_mensaje()
++ listar()
+
+ServidorCorreo
+- usuarios: dict
++ registrar_usuario()
++ enviar()
