@@ -23,3 +23,10 @@ Clase servidor correo
 - usuarios: 
 + registrar_usuario()
 + enviar()
+
+
+Encapsulamiento: 
+todos los atributos son privados (_atributo) y se accede mediante métodos o propiedades.
+Cada clase tiene un rol claro : Usuario gestiona sus carpetas y mensajes, el Mensaje, encapsula la información del correo, la Carpeta,organiza los mensajes, el Servidor correo,conecta usuarios y maneja el envío.
+El sistema puede crecer fácilmente (agregar filtros, etiquetas, búsqueda).
+y los métodos como listar() puede usarse en múltiples contextos.
