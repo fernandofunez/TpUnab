@@ -1,25 +1,25 @@
-Usuario
+Clase Usuario
 - nombre: str
 - email: str
-- carpetas: dict
+- carpetas: 
 + enviar_mensaje()
 + recibir_mensaje()
 + listar_mensajes()
 
-Mensaje
+Clase Mensaje
 - remitente: str
 - destinatario: str
 - asunto: str
 - cuerpo: str
 + resumen()
 
-Carpeta
+Clase Carpeta
 - nombre: str
 - mensajes: list
 + agregar_mensaje()
 + listar()
 
-ServidorCorreo
-- usuarios: dict
+Clase servidor correo
+- usuarios: 
 + registrar_usuario()
 + enviar()
