@@ -46,7 +46,7 @@ class SistemaEmail():
   #Retorna True si el envio se realizo
   def enviarMensaje(self, correoDestinatario, asunto, cuerpo, prioridad):
     if(self.usuarioAutenticado is None): return False
-    usuarioDestinatario = self.encontrarUsuarioEnLosServidores(correoDestinatario)
+    usuarioDestinatario = self.__encontrarUsuarioEnLosServidores(correoDestinatario)
     if(usuarioDestinatario is None): return False
     
     
@@ -68,7 +68,7 @@ class SistemaEmail():
     self.usuarioAutenticado.verContenidoBandeja()
   
   #Busca en todos los servidores el usuario con ese correo
-  def encontrarUsuarioEnLosServidores(self, correo):
+  def __encontrarUsuarioEnLosServidores(self, correo):
     return Usuario('fede', 'fede@fede.com', '1234')
   
   #Retorna el servidor menos lleno. Alfabeticamente

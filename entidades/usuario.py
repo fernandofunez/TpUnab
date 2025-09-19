@@ -46,13 +46,15 @@ class Usuario():
     pass
   
   #Muestra solo los nombres de las carpetas (ejmplo)
-  def verCarpetas():
+  def verCarpetas(self):
     pass
   
-  def listarMensajePrioridad():
+  def listarMensajePrioridad(self):
     pass
   
   
+  def agregarNuevaCarpeta(self, nombreCarpetaPadre, nombreNuevaCarpetaHija):
+    pass
     
   
   
@@ -61,12 +63,3 @@ class Usuario():
   
   
   
-  
-  
-  
-#nuevoUsuario = Usuario('fede', 'fede@fede.ocm', '12345')  
-#nuevoUsuario.clave --> ES PRIVADO, NO SE ACCEDE
-
-def encontrarFer():
-  pass
-

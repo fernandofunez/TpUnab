@@ -7,11 +7,11 @@ class Carpeta():
     #self.mensajes = [Mensaje("Prueba", "Esto es un mensaje"), Mensaje("Prueba 2", "Esto es otro mensaje")]
     
   #Agrega una suncarpeta a la carpeta  
-  def crearSubcarpetas(self):
+  def crearSubcarpetas(self, nombre):
     pass
   
   #Agrega una mensaje a la carpeta
-  def agregarMensaje(self):
+  def agregarMensaje(self, mensaje):
     pass
   
   #Lista todos los mensajes de la carpeta
