@@ -1,32 +1,93 @@
-Clase Usuario
-- nombre: str
-- email: str
-- carpetas: 
-+ enviar_mensaje()
-+ recibir_mensaje()
-+ listar_mensajes()
-
-Clase Mensaje
-- remitente: str
-- destinatario: str
-- asunto: str
-- cuerpo: str
-+ resumen()
-
-Clase Carpeta
-- nombre: str
-- mensajes: list
-+ agregar_mensaje()
-+ listar()
-
-Clase servidor correo
-- usuarios: 
-+ registrar_usuario()
-+ enviar()
+       SistemaDeEmail
+-------------------------------------
+- servidores: ServidorCorreo[]    
+- usuarioAutenticado: Usuario     
+-------------------------------------
++ iniciarSesion(correo: string, clave: string): void                  
++ registrar(nombre: string, correo: string,                          
+  contraseña: string, validarContraseña: string): bool               
++ cerrarSesion(): void                                              
++ enviarMensaje(correoDestinatario: string, asunto: string,         
+   cuerpo: string, prioridad: number): bool                           
++ crearNuevaCarpeta(): bool                                          
++ verBanedeja(): void                                                
++ encontrarUsuarioEnLosServidores(correo: string): Usuario           
+- __retornarServidorMenosLleno(): ServidorCorreo 
 
 
-Encapsulamiento: 
-todos los atributos son privados (_atributo) y se accede mediante métodos o propiedades.
-Cada clase tiene un rol claro : Usuario gestiona sus carpetas y mensajes, el Mensaje, encapsula la información del correo, la Carpeta,organiza los mensajes, el Servidor correo,conecta usuarios y maneja el envío.
-El sistema puede crecer fácilmente (agregar filtros, etiquetas, búsqueda).
-y los métodos como listar() puede usarse en múltiples contextos.
+
+         ServidorCorreo    
+-------------------------------------        
+- nombreServicio: string          
+- usuarios: Usuario[]    
+-------------------------------------         
++ buscarUsuario(nombre: string): Usuario                              
++ agregarUsuarioAlServidor(usuario: Usuario):                     
++ buscarUsuarioPorEmail(email: string): Usuario  
+
+
+
+
+             Usuario               
+-------------------------------------
+- nombre: string                  
+- correo: string                  
+- __clave: string                 
+- bandeja: Carpeta                
+-------------------------------------
++ authenticarse(correo: string, clave: string): bool                 
++ agregarMensaje(mensaje: Mensaje): void                            
++ agregarMensajeEnviado(mensaje: Mensaje): void                     
++ verContenidoBandeja(): void                                       
++ verCarpetas(): void                                               
++ listarMensajePrioridad(): void                                    
+- __hashClave(): void         
+
+
+             Mensaje               
+-------------------------------------
+- asunto: string                  
+- cuerpo: string                  
+- remitente: string               
+- destinatario: string            
+- prioridad: number               
+-------------------------------------
++ __str__(): string             
+
+
+             Carpeta               
+-------------------------------------
+- nombre: string                  
+- subcarpetas: Carpeta[]          
+- mensajes: Mensaje[]             
+-------------------------------------
++ crearSubcarpetas(): void                                        
++ agregarMensaje(): void                                          
++ listarMensajesDeCarpeta(): void                                 
++ listarCarpetas(): void                 
+
+
+
+
+
+Encapsulamiento: Todos los atributos importantes son privados (_atributo o __atributo) y se accede mediante métodos o propiedades. Esto protege la información y evita accesos directos no deseados.
+
+Roles claros por clase:
+
+* Usuario gestiona sus carpetas y mensajes.
+
+* Mensaje encapsula la información del correo (asunto, cuerpo, remitente, destinatario, prioridad).
+
+* Carpeta organiza los mensajes y subcarpetas.
+
+* ServidorCorreo conecta usuarios y permite buscarlos por nombre o correo.
+
+* SistemaEmail coordina todo el funcionamiento del sistema.
+
+Extensibilidad: El sistema puede crecer fácilmente. Se pueden agregar filtros, etiquetas, búsquedas por prioridad, reglas de clasificación, etc.
+
+Reutilización: Los métodos como listar() pueden usarse en múltiples contextos (carpetas, mensajes, usuarios), lo que hace que el diseño sea flexible y adaptable.
+
+Orquestador central: Utilizamos una clase central/padre llamada "SistemaEmail" para orquestar todos los demás objetos. 
+#Orquestador de los ELEMENTOS de la aplicación 
+#NO ES EL ARRANQUE. Es el orquestador → Maneja: usuarios, envío de mensajes, creación/logueo de usuarios, etc.
