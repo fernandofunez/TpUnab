@@ -3,14 +3,14 @@
 - servidores: ServidorCorreo[]    
 - usuarioAutenticado: Usuario     
 -------------------------------------
-+ iniciarSesion(correo: string, clave: string): void                  
++ iniciarSesion(correo: string, clave: string):                 
 + registrar(nombre: string, correo: string,                          
-  contraseña: string, validarContraseña: string): bool               
-+ cerrarSesion(): void                                              
+  contraseña: string, validarContraseña: string)               
++ cerrarSesion()                                              
 + enviarMensaje(correoDestinatario: string, asunto: string,         
-   cuerpo: string, prioridad: number): bool                           
-+ crearNuevaCarpeta(): bool                                          
-+ verBanedeja(): void                                                
+   cuerpo: string, prioridad: number)                           
++ crearNuevaCarpeta()                                          
++ verBanedeja()                                                
 + encontrarUsuarioEnLosServidores(correo: string): Usuario           
 - __retornarServidorMenosLleno(): ServidorCorreo 
 
@@ -35,13 +35,13 @@
 - __clave: string                 
 - bandeja: Carpeta                
 -------------------------------------
-+ authenticarse(correo: string, clave: string): bool                 
-+ agregarMensaje(mensaje: Mensaje): void                            
-+ agregarMensajeEnviado(mensaje: Mensaje): void                     
-+ verContenidoBandeja(): void                                       
-+ verCarpetas(): void                                               
-+ listarMensajePrioridad(): void                                    
-- __hashClave(): void         
++ authenticarse(correo: string, clave: string)                 
++ agregarMensaje(mensaje: Mensaje)                           
++ agregarMensajeEnviado(mensaje: Mensaje)                 
++ verContenidoBandeja()                                     
++ verCarpetas()                                              
++ listarMensajePrioridad()                                  
+- __hashClave()         
 
 
              Mensaje               
@@ -61,10 +61,10 @@
 - subcarpetas: Carpeta[]          
 - mensajes: Mensaje[]             
 -------------------------------------
-+ crearSubcarpetas(): void                                        
-+ agregarMensaje(): void                                          
-+ listarMensajesDeCarpeta(): void                                 
-+ listarCarpetas(): void                 
++ crearSubcarpetas()                                        
++ agregarMensaje()                                          
++ listarMensajesDeCarpeta()                                 
++ listarCarpetas()              
 
 
 
