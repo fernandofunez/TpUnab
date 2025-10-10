@@ -50,11 +50,15 @@ class Usuario():
     if not isinstance(nuevaCarpetaHija, Carpeta): raise TypeError("nuevaCarpetaHija espera un tipo de dato Carpeta")
     exito = self.bandeja.insertar(nuevaCarpetaHija, nombreCarpetaPadre)
     return exito
+  
+  
+  def compararClaves(self, claveHash:str):
+    return claveHash == self._claveEncriptada
     
   
   
   
-  
+    
   
   
   

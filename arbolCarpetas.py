@@ -88,4 +88,4 @@ class ArbolCarpetas():
     def __iter__(self):
       if not isinstance(self.raiz, NodoCarpeta): raise SyntaxError("Error en la iteracion")
       for nodo in self.raiz:
-        yield nodo.valor
+        yield nodo.valor 
