@@ -32,6 +32,6 @@ class Mensaje():
   
   
   def __str__(self):
-       return f"Asunto: {self.asunto} | Cuerpo: {self.cuerpo}"
+       return f"De: {self.remitente} | Para: {self.destinatario} | Asunto: {self.asunto} | Cuerpo: {self.cuerpo}"
   
 

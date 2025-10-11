@@ -4,16 +4,21 @@ class ServidorCorreo():
   def __init__(self, nombreServidor):
     self.nombreServidor = nombreServidor
     self.usuarios:list[Usuario] = []
-    pass
   
   
-  def agregarUsuarioAlServidor(self, usuario):
+  def agregarUsuarioAlServidor(self, usuario:Usuario):
     self.usuarios.append(usuario)
-  
-  
-  def buscarUsuarioPorEmail(self, email:str):
+    
+  def listaDeCorreosDeUsuarios(self):
+    correos:list[str] = []
     for usuario in self.usuarios:
-      print(usuario.correo)
-      print(usuario.correo == email)
-      return usuario if usuario.correo == email else None  #Rompe el bucle. usar while mejor 
+      correos.append(usuario.correo)
+    return correos
+  
+  
+  def buscarUsuarioPorCorreo(self, email:str):
+    for usuario in self.usuarios:
+      if usuario.correo == email:
+        return usuario
+    return None
   

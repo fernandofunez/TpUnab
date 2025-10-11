@@ -17,7 +17,7 @@ class Usuario():
     self.bandeja.insertar(Carpeta('Borradores'), 'Correo')
   
   #Agrea un Mensaje a la carpeta destino
-  def agregarMensaje(self, mensaje:Mensaje, nombreCarpetaDestino:str):
+  def agregarMensaje(self, mensaje:Mensaje, nombreCarpetaDestino:str = 'Bandeja de entrada'):
     carpetaDestino = self.bandeja.buscar(nombreCarpetaDestino)
     if isinstance(carpetaDestino, Carpeta):
       carpetaDestino.agregarMensaje(mensaje)
