@@ -33,5 +33,16 @@ class Mensaje():
   
   def __str__(self):
        return f"De: {self.remitente} | Para: {self.destinatario} | Asunto: {self.asunto} | Cuerpo: {self.cuerpo}"
+     
+  def __eq__(self, value):
+    if not isinstance(value, Mensaje):
+      return False
+    return(
+      self.asunto == value.asunto and
+      self.cuerpo == value.cuerpo and
+      self.remitente == value.remitente and
+      self.destinatario == value.destinatario and
+      self.prioridad == value.prioridad
+    )
   
 

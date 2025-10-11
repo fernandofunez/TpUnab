@@ -1,6 +1,3 @@
-#Orquestador de los ELEMENTOS de la aplicacion
-#NO ES EL ARRANQUE. Es el orquestador --> Meneja: Usuarios, Envio de mensajes, creacion/logueo de usuario, etc
-
 from servidorCorreo import ServidorCorreo
 from usuario import Usuario
 from mensaje import Mensaje
@@ -99,9 +96,7 @@ class SistemaEmail():
     self.interfaz.mostrarArbolDeCarpetas(str(self.usuarioAutenticado.bandeja))
     
   def _agregarNuevaCarpeta(self):
-    carpetasDisponibles:list[str] = []
-    for carpeta in self.usuarioAutenticado.bandeja:
-      carpetasDisponibles.append(carpeta.nombre)
+    carpetasDisponibles:list[str] = self._obtenerNombreDeCarpetasDisponibles()
     nuevaCarpeta:str = solicitarInformacion("Indique nombre de la nueva carpeta: > ", str)
     self.interfaz.mostrarListaCarpetas(carpetasDisponibles)
     carpetaPadre:str = solicitarInformacion('Indique carpeta destino: > ', str, carpetasDisponibles)
@@ -144,8 +139,80 @@ class SistemaEmail():
       servidorIndex+=1
     return usuarioEncontrado  
   
-  def _iniciarMoverMensaje():
+  def _iniciarMoverMensaje(self):
+    seleccion = self._obtenerMensajeNavegando()
+    if seleccion is None: return
+    
+    carpetaOrigen:Carpeta = seleccion["carpeta"]
+    mensaje:Mensaje = seleccion["mensaje"]
+    
+    self.interfaz.mostrarSeleccionMensajeParaMover(carpetaOrigen.nombre, mensaje.asunto)
+    carpetasDisponibles:list[str] = self._obtenerNombreDeCarpetasDisponibles()
+    self.interfaz.mostrarListaCarpetas(carpetasDisponibles)
+    carpetaDestinoSeleccionada:str = solicitarInformacion('Indique carpeta destino: > ', str, carpetasDisponibles)
+    
+    carpetaDestino = self.usuarioAutenticado.bandeja.buscar(carpetaDestinoSeleccionada)
+    if(isinstance(carpetaDestino, Carpeta)):
+      carpetaOrigen.eliminarMensaje(mensaje)
+      carpetaDestino.agregarMensaje(mensaje)
     return
+  
+  def _obtenerMensajeNavegando(self):
+    mensaje = None
+    salir = False
+    
+    archivos = self.usuarioAutenticado.bandeja
+    carpetaActual = archivos.raiz.valor
+    
+    while not salir and not isinstance(mensaje, Mensaje): 
+      carpetaPadre = archivos.obtenerCarpetaPadre(carpetaActual.nombre)
+      carpetasHijas = archivos.obtenerCarpetasHijas(carpetaActual.nombre)
+      mensajesEnCarpetaActual:list[Mensaje] = carpetaActual.mensajes
+
+      self.interfaz.mostrarUbicacionActual(carpetaActual.nombre)
+        
+      if carpetaPadre:
+        self.interfaz.mostrarOpcionRetroceso(carpetaPadre.nombre)
+      if carpetasHijas:
+          self.interfaz.mostrarSubcarpetasDisponibles([c.nombre for c in carpetasHijas])
+      self.interfaz.mostrarMensajesEnCarpeta(mensajesEnCarpetaActual)
+
+      self.interfaz.mostrarOpcionesDeNavegacion(carpetaPadre is not None, len(carpetasHijas) > 0, len(mensajesEnCarpetaActual) > 0)
+
+      accion = solicitarInformacion("Seleccione una accion > ", str).strip().lower()
+
+      if accion == "x":
+        salir = True
+        self.interfaz.mostrarSalidaDeNavegacion()        
+      elif accion == ".." and carpetaPadre:
+        carpetaActual = carpetaPadre
+            
+      elif accion.isdigit():
+        indice = int(accion) - 1
+        if 0 <= indice < len(carpetasHijas):    
+          carpetaActual = carpetasHijas[indice]
+        else:
+          self.interfaz.mostrarOpcionInvalida()
+                
+      elif accion.startswith("m"):
+        try:
+          indice = int(accion[1:]) - 1 #'m12' -> 12
+          if 0 <= indice < len(mensajesEnCarpetaActual):
+            mensaje:Mensaje = mensajesEnCarpetaActual[indice]
+            self.interfaz.mostrarMensajeSeleccionado(mensaje.asunto)
+          else:
+            self.interfaz.mostrarOpcionInvalida()
+        except ValueError:
+          self.interfaz.mostrarOpcionInvalida()
+      else:
+        self.interfaz.mostrarOpcionInvalida()
+    return {"mensaje": mensaje, "carpeta": carpetaActual} if mensaje else None
+  
+  def _obtenerNombreDeCarpetasDisponibles(self):
+    carpetasDisponibles:list[str] = []
+    for carpeta in self.usuarioAutenticado.bandeja:
+      carpetasDisponibles.append(carpeta.nombre)
+    return carpetasDisponibles
     
   def _cerrarSesion(self):
     self.usuarioAutenticado = None  

@@ -42,7 +42,7 @@ class InterfazDeUsuario:
   def mostrarMenuApp(self, nombre: str):
     print("\n")
     self._titulo(f"BIENVENIDO, {nombre}")
-    print("¿Qué desea realizar hoy?\n")
+    print("¿Que desea realizar hoy?\n")
     print("  1) Crear carpeta")
     print("  2) Mostrar mis carpetas")
     print("  3) Enviar mensaje")
@@ -90,7 +90,7 @@ class InterfazDeUsuario:
   def mostrarCarpetaCreadaConExito(self, nombreCarpeta: str):
     print("\n")
     self._linea("=")
-    print("Carpeta creada con éxito".center(self.ancho))
+    print("Carpeta creada con exito".center(self.ancho))
     print(f"'{nombreCarpeta}' ahora forma parte de tus carpetas.".center(self.ancho))
     self._linea("=")
 
@@ -119,4 +119,62 @@ class InterfazDeUsuario:
     print(f"El usuario '{remitente}' ha enviado un mensaje a '{destinatario}'.".center(self.ancho))
     self._linea("=")
 
+  def mostrarUbicacionActual(self, nombreCarpeta: str):
+    print("\n")
+    self._titulo(f"CARPETA ACTUAL: {nombreCarpeta}")
 
+  def mostrarOpcionRetroceso(self, nombrePadre: str):
+    print(f"Puede volver a la carpeta superior: {nombrePadre}")
+
+  def mostrarSubcarpetasDisponibles(self, nombres: list[str]):
+    if not nombres:
+      return
+    print("\nSubcarpetas disponibles:")
+    for i, nombre in enumerate(nombres, start=1):
+      print(f"  {i}) {nombre}")
+
+  def mostrarMensajesEnCarpeta(self, mensajes: list):
+    print("\nMensajes en esta carpeta:")
+    if not mensajes:
+      print("  No hay mensajes disponibles.")
+    else:
+      for i, mensaje in enumerate(mensajes, start=1):
+        print(f"  m{i}) {mensaje.asunto}")
+
+  def mostrarOpcionesDeNavegacion(self, puedeRetroceder:bool, puedeAvanzar:bool, puedeSeleccionarMensaje:bool):
+    self._linea("-")
+    print("Opciones:")
+    if puedeRetroceder :
+      print("  ..  Retroceder a la carpeta superior")
+    if puedeAvanzar :
+      print("  <n>  Ingresar a una subcarpeta (ejemplo: 1)")
+    if puedeSeleccionarMensaje : 
+      print("  m<n> Seleccionar un mensaje (ejemplo: m1)")
+    print("  x    Salir de la navegacion")
+    self._linea("-")
+
+  def mostrarOpcionInvalida(self):
+    print("\nOpcion no valida. Intente nuevamente.")
+
+  def mostrarMensajeSeleccionado(self, asunto: str):
+    print("\n")
+    self._linea("=")
+    print("MENSAJE SELECCIONADO".center(self.ancho))
+    self._linea("-")
+    print(f"Se ha seleccionado el mensaje: '{asunto}'".center(self.ancho))
+    self._linea("=")
+
+  def mostrarSalidaDeNavegacion(self):
+    print("\n")
+    self._linea("=")
+    print("Saliendo del navegador de carpetas...".center(self.ancho))
+    self._linea("=")
+
+  def mostrarSeleccionMensajeParaMover(self, carpetaOrigen: str, asuntoMensaje: str):
+    print("\n")
+    self._linea("=")
+    print(f"Se selecciono de la carpeta '{carpetaOrigen}' el mensaje:".center(self.ancho))
+    print(f"'{asuntoMensaje}'".center(self.ancho))
+    self._linea("-")
+    print("Ahora indique una carpeta de destino.".center(self.ancho))
+    self._linea("=")

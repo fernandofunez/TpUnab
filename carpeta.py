@@ -12,10 +12,16 @@ class Carpeta():
   
   #Lista todos los mensajes de la carpeta
   def listarMensajesDeCarpeta(self):
+    index = 0
     for mensaje in self.mensajes:
-      print('\n')
-      print(mensaje)
-      print('\n') 
+      print(f"{index+1}-{str(mensaje)}")
+      index+=1
+  
+  def eliminarMensaje(self, mensaje:Mensaje):
+    if mensaje in self.mensajes:
+      self.mensajes.remove(mensaje)
+      return True
+    return False    
   
   def __str__(self):
     return self.nombre

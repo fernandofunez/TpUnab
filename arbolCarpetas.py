@@ -61,6 +61,27 @@ class ArbolCarpetas():
           return str(nombreCarpeta)
       return f"{'│  ' * (profundidad-1)}{'└─ ' if esUltimo else '├─ '}{nombreCarpeta}"
     
+    def obtenerCarpetaPadre(self, nombreCarpeta):
+      nodoPadre = self._buscarPadreRecursivo(nombreCarpeta, self.raiz)
+      if isinstance(nodoPadre, NodoCarpeta):
+        return nodoPadre.valor
+      return None
+    
+    def obtenerCarpetasHijas(self, nombreCarpeta):
+      nodoPadre = self._buscarRecursivo(nombreCarpeta, self.raiz)
+      if isinstance(nodoPadre, NodoCarpeta):
+        return [hijo.valor for hijo in nodoPadre.hijos]
+      return None  
+    
+    
+    def _buscarPadreRecursivo(self, nombreCarpeta:str, nodoActual:NodoCarpeta):
+      for hijo in nodoActual.hijos:
+        if str(hijo.valor) == nombreCarpeta:
+          return nodoActual
+        resultado = self._buscarPadreRecursivo(nombreCarpeta, hijo)
+        if isinstance(resultado, NodoCarpeta):
+          return resultado
+      return None
     
     #--------------------------------------------------------
     #----------------Sobrecarga de operadores----------------
