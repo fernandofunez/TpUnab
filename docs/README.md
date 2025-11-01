@@ -189,6 +189,10 @@ Estas pruebas pueden implementarse utilizando unittest o pytest, y permitirían 
 
 Utilizamos una clase principal llamada `SistemaEmail` para coordinar todos los elementos del sistema: usuarios, envío de mensajes, creación y login de usuarios, navegación por carpetas, etc
 
+<h2>Diagrama de clases</h2>
+
+Diagrama visual de clases disponible en [docs/DiagramaDeClases.PNG](docs/DiagramaDeClases.PNG)
+
 
 <br>
 <br>
@@ -200,5 +204,3 @@ Utilizamos una clase principal llamada `SistemaEmail` para coordinar todos los e
 **Materia**: estructura de Datos  
 **Profesor**: Bianco, Leonardo Angel  
 **Entrega**:   15 - 11 - 2025
-
-
