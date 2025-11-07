@@ -191,7 +191,7 @@ Utilizamos una clase principal llamada `SistemaEmail` para coordinar todos los e
 
 <h2>Diagrama de clases</h2>
 
-[Diagrama de clases](docs/docs/DiagramaDeClases.PNG)
+![](https://github.com/fernandofunez/TpUnab/blob/786d6a44a25f76f0cf381f015518ac7fdb293324/docs/DiagramaDeClases.PNG)
 
 
 
