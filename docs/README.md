@@ -191,7 +191,8 @@ Utilizamos una clase principal llamada `SistemaEmail` para coordinar todos los e
 
 <h2>Diagrama de clases</h2>
 
-[Ver diagrama de clases](docs/DiagramaDeClases.PNG)(docs)
+[Diagrama de clases](docs/docs/DiagramaDeClases.PNG)
+
 
 
 
