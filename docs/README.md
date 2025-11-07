@@ -190,8 +190,8 @@ Estas pruebas pueden implementarse utilizando unittest o pytest, y permitirían 
 Utilizamos una clase principal llamada `SistemaEmail` para coordinar todos los elementos del sistema: usuarios, envío de mensajes, creación y login de usuarios, navegación por carpetas, etc
 
 <h2>Diagrama de clases</h2>
+![](https://github.com/fernandofunez/TpUnab/blob/786d6a44a25f76f0cf381f015518ac7fdb293324/docs/DiagramaDeClases.PNG)
 
-[Diagrama de clases](docs/docs/DiagramaDeClases.PNG)
 
 
 
