@@ -22,3 +22,8 @@ class ServidorCorreo():
         return usuario
     return None
   
+  def __eq__(self, servidor):
+    return isinstance(servidor, ServidorCorreo) and self.nombreServidor == servidor.nombreServidor
+  
+  def __str__(self):
+    return self.nombreServidor
