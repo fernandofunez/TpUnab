@@ -8,22 +8,50 @@ class Usuario():
     self.nombre:str = nombre
     self.correo:str = correo
     self._claveEncriptada:str = hashClave(clave)
+    self._filtros: list[dict] = []
+    
+    self.agregarFiltro("asunto", "URGENTE", "Urgentes")
     self._inicializarCorreo()
   
   def _inicializarCorreo(self):
     self.bandeja:ArbolCarpetas = ArbolCarpetas(Carpeta('Correo'))
     self.bandeja.insertar(Carpeta('Bandeja de entrada'), 'Correo')
+    self.bandeja.insertar(Carpeta('Urgentes'), 'Bandeja de entrada')
     self.bandeja.insertar(Carpeta('Enviados'), 'Correo')
     self.bandeja.insertar(Carpeta('Borradores'), 'Correo')
   
   #Agrea un Mensaje a la carpeta destino
-  def agregarMensaje(self, mensaje:Mensaje, nombreCarpetaDestino:str = 'Bandeja de entrada'):
+  def agregarMensaje(self, mensaje:Mensaje, nombreCarpetaDestino:str = 'Bandeja de entrada', evitarFiltro = False):
+    carpetaFiltrada = self._aplicarFiltros(mensaje)
+    if carpetaFiltrada is not None and not evitarFiltro:
+        nombreCarpetaDestino = carpetaFiltrada
+
     carpetaDestino = self.bandeja.buscar(nombreCarpetaDestino)
+    
     if isinstance(carpetaDestino, Carpeta):
-      carpetaDestino.agregarMensaje(mensaje)
-      return True
+        carpetaDestino.agregarMensaje(mensaje)
+        return True
+    
     return False
   
+  def agregarFiltro(self, propiedad:str, valor, carpetaDestino:str):
+    filtro = {
+      "propiedad": propiedad,
+      "valor": valor,
+      "destino": carpetaDestino
+    }
+    self._filtros.append(filtro)
+    
+  def _aplicarFiltros(self, mensaje:Mensaje):
+    for filtro in self._filtros:
+      propiedad = filtro["propiedad"]
+      valor = filtro["valor"]
+
+    if getattr(mensaje, propiedad) == valor:
+      return filtro["destino"]
+
+    return None
+    
   #Guarda el mensaje en la carpetas 'enviados'
   def agregarMensajeEnviado(self, mensaje:Mensaje):
     NOMBRE_CARPETA_ENVIADOS = "Enviados"

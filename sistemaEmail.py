@@ -4,11 +4,11 @@ from mensaje import Mensaje
 from interfazDeUsuario import InterfazDeUsuario
 from herramientas import (hashClave, solicitarInformacion)
 from carpeta import Carpeta
-
+from servidores import Servidores
 
 class SistemaEmail():
   def __init__(self):
-    self.servidores:list[ServidorCorreo] = []
+    self.servidores:Servidores
     self.usuarioAutenticado = None
     self.interfaz:InterfazDeUsuario = InterfazDeUsuario()
     pass
@@ -23,14 +23,34 @@ class SistemaEmail():
       self._utilizarApp()
     
   def _iniciarServidores(self):
-    servidor1 = ServidorCorreo('Servidor_1')
-    servidor1.agregarUsuarioAlServidor(Usuario('Juan Perez', 'juanperez@gmail.com', '12345678'))
-    servidor1.agregarUsuarioAlServidor(Usuario('Test', 'test@test.com', 'test'))
-    servidor2 = ServidorCorreo('Servidor_1')
-    servidor2.agregarUsuarioAlServidor(Usuario('Pedro Gomez', 'pedrogomez@gmail.com', '12345678'))
-    servidor2.agregarUsuarioAlServidor(Usuario('Teo Pascual', 'teopascual@test.com', '12345678'))
-    self.servidores.append(servidor1)
-    self.servidores.append(servidor2)
+    self.servidores = Servidores()
+
+    servidor1 = ServidorCorreo('S1')
+    servidor2 = ServidorCorreo('S2')
+    servidor3 = ServidorCorreo('S3')
+    servidor4 = ServidorCorreo('S4')
+    servidor5 = ServidorCorreo('S5')
+
+    for servidor in (servidor1, servidor2, servidor3, servidor4, servidor5):
+      self.servidores.agregarServidor(servidor)
+
+    servidor1.agregarUsuarioAlServidor(Usuario('Ana',   'ana@s1.com',   '123'))
+    servidor2.agregarUsuarioAlServidor(Usuario('Bruno', 'bruno@s2.com', '123'))
+    servidor3.agregarUsuarioAlServidor(Usuario('Cami',  'cami@s3.com',  '123'))
+    servidor4.agregarUsuarioAlServidor(Usuario('Dino',  'dino@s4.com',  '123'))
+    servidor5.agregarUsuarioAlServidor(Usuario('Eva',   'eva@s5.com',   '123'))
+
+
+    self.servidores.agregarConexion(servidor1, servidor2, 10)
+    self.servidores.agregarConexion(servidor2, servidor3, 8)
+    self.servidores.agregarConexion(servidor3, servidor4, 6)
+    self.servidores.agregarConexion(servidor4, servidor5, 9)
+
+    self.servidores.agregarConexion(servidor1, servidor3, 22)
+    self.servidores.agregarConexion(servidor2, servidor4, 12)
+    self.servidores.agregarConexion(servidor1, servidor4, 26)
+    self.servidores.agregarConexion(servidor1, servidor5, 35)
+
       
   #Bucle para autenticacion del usuario    
   def _autenticarUsuario(self):
@@ -51,7 +71,7 @@ class SistemaEmail():
   def _utilizarApp(self):
     while True:
       self.interfaz.mostrarMenuApp(self.usuarioAutenticado.nombre)
-      eleccion = solicitarInformacion('> ', int, [1, 2, 3, 4, 0])
+      eleccion = solicitarInformacion('> ', int, [1, 2, 3, 4, 5, 0])
       
       if(eleccion == 1):#Crear carpeta en mi usuario
         self.interfaz.mostrarEleccion(1)
@@ -65,6 +85,9 @@ class SistemaEmail():
       elif(eleccion == 4):#Mover un mensaje existente entre carpetas
         self._iniciarMoverMensaje()
         self.interfaz.mostrarEleccion(4)
+      elif eleccion == 5:
+        self.interfaz.mostrarEleccion(5)
+        self._iniciarCrearFiltro()  
       elif(eleccion == 0):
         self.interfaz.mostrarEleccion(0)
         self._cerrarSesion()
@@ -79,13 +102,13 @@ class SistemaEmail():
       self.interfaz.mostrarFalloRegistrarseUsuarioRepetido()
     else:
       nuevoUsuario = Usuario(nombre, correo, clave)
-      self.servidores[0].agregarUsuarioAlServidor(nuevoUsuario)#TODO DEFINIR USO EN LA CLASE DE 'GRAFOS'. De que forma agregamos usuarios al sistema?
+      self.servidores.agregarUsuarioEnServidorAleatorio(nuevoUsuario)
       self.interfaz.mostrarExitoRegistrarse()
       
   def _iniciarSesion(self):
     correo:str = solicitarInformacion('Ingrese correo de email: > ', str)
     clave = solicitarInformacion('Ingrese clave de usuario: > ', str)
-    usuarioEncontrado = self._obtenerUsuarioPorCorreo(correo)
+    usuarioEncontrado = self.servidores.buscarUsuarioPorCorreo(correo)
     if(isinstance(usuarioEncontrado, Usuario)):
       self.usuarioAutenticado = usuarioEncontrado if usuarioEncontrado.compararClaves(hashClave(clave)) else None
     else: 
@@ -106,38 +129,19 @@ class SistemaEmail():
     
   
   def _iniciarEnvioMensaje(self):
-    destinatarios = self._obtenerCorreosDestinatariosDisponibles()
-    
+    destinatarios = self.servidores.obtenerCorreosDestinatariosDisponibles()
     self.interfaz.mostrarCorreosDestinatariosDisponibles(destinatarios)
     correoDestinatario = solicitarInformacion('Indique un correo destinatario: > ', str, destinatarios)
     asunto = solicitarInformacion('Asunto del mensaje: \n> ', str)
     cuerpo = solicitarInformacion('Cuerpo del mensaje: \n> ', str)
-    
-    usuarioRemitente = self.usuarioAutenticado
-    usuarioDestinatario = self._obtenerUsuarioPorCorreo(correoDestinatario)
-    
-    nuevo_mensaje = Mensaje(asunto, cuerpo, usuarioRemitente.nombre, usuarioDestinatario.nombre, 0)
+    costoTotal = self.servidores.enviarMensaje(self.usuarioAutenticado.correo, correoDestinatario, asunto, cuerpo,  0)
+  
+    if costoTotal is not None:
+      self.interfaz.mostrarAvisoMensajeEnviadoAUsuario(self.usuarioAutenticado.correo, correoDestinatario, costoTotal)
+    else:
+      print("No se pudo enviar el mensaje")  
 
-    usuarioRemitente.agregarMensajeEnviado(nuevo_mensaje)
-    usuarioDestinatario.agregarMensaje(nuevo_mensaje)
     
-    self.interfaz.mostrarAvisoMensajeEnviadoAUsuario(usuarioRemitente.nombre, usuarioDestinatario.nombre)
-  
-  
-  def _obtenerCorreosDestinatariosDisponibles(self):
-    correos:list[str] = []
-    for servidor in self.servidores:
-      correos.extend(servidor.listaDeCorreosDeUsuarios())
-    return correos
-    
-  def _obtenerUsuarioPorCorreo(self, correo:str):
-    usuarioEncontrado = None
-    servidorIndex = 0
-    while not isinstance(usuarioEncontrado, Usuario) and len(self.servidores) > servidorIndex:
-      servidor = self.servidores[servidorIndex]
-      usuarioEncontrado = servidor.buscarUsuarioPorCorreo(correo)
-      servidorIndex+=1
-    return usuarioEncontrado  
   
   def _iniciarMoverMensaje(self):
     seleccion = self._obtenerMensajeNavegando()
@@ -156,6 +160,33 @@ class SistemaEmail():
       carpetaOrigen.eliminarMensaje(mensaje)
       carpetaDestino.agregarMensaje(mensaje)
     return
+  
+  def _iniciarCrearFiltro(self):
+    carpetas = self._obtenerNombreDeCarpetasDisponibles()
+    self.interfaz.mostrarListaCarpetas(carpetas)
+    carpetaDestino = solicitarInformacion("Carpeta destino del filtro: > ", str, carpetas)
+
+    propiedades = ["remitente", "asunto"]  # Propiedades permitidas (DEBEN ESTAR EN EL OBJETO MENSAJE)
+    print("\nCampos disponibles para filtrar:")
+    for p in propiedades:
+      print(" -", p)
+
+    propiedad = None
+    while propiedad not in propiedades:
+      propiedad = solicitarInformacion("Indique la propiedad a filtrar: > ", str)
+      if propiedad not in propiedades:
+        print(f"'{propiedad}' no es valida. Intente nuevamente.\n")
+
+    valor = solicitarInformacion("Valor del filtro: > ", str)
+
+    self.usuarioAutenticado.agregarFiltro(propiedad, valor, carpetaDestino)
+    print(f"\nFiltro creado correctamente: {propiedad} == '{valor}' → {carpetaDestino}")
+
+
+
+  
+  
+  
   
   def _obtenerMensajeNavegando(self):
     mensaje = None

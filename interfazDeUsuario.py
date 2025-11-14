@@ -47,6 +47,7 @@ class InterfazDeUsuario:
     print("  2) Mostrar mis carpetas")
     print("  3) Enviar mensaje")
     print("  4) Mover mensajes entre carpetas")
+    print("  5) Crear filtro automatico")
     print("  0) Cerrar Sesion")
     self._bloque("Ingrese el numero de opciun y presione 'Enter':")
       
@@ -111,12 +112,13 @@ class InterfazDeUsuario:
       print(f"- {nombre}")
     self._linea("=")
     
-  def mostrarAvisoMensajeEnviadoAUsuario(self, remitente: str, destinatario: str):
+  def mostrarAvisoMensajeEnviadoAUsuario(self, remitente: str, destinatario: str, costoMs):
     print("\n")
     self._linea("=")
     print("MENSAJE ENVIADO".center(self.ancho))
     self._linea("-")
     print(f"El usuario '{remitente}' ha enviado un mensaje a '{destinatario}'.".center(self.ancho))
+    print(f"Costo total del envio: {int(costoMs)} ms.".center(self.ancho))
     self._linea("=")
 
   def mostrarUbicacionActual(self, nombreCarpeta: str):

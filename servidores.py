@@ -1,5 +1,8 @@
 from servidorCorreo import ServidorCorreo
 from usuario import Usuario
+from mensaje import Mensaje
+import random
+
 
 class Servidores:
   
@@ -112,33 +115,54 @@ class Servidores:
 
     return costoAcumulado[indiceServidorDestino], rutaServidores
 
-  
-  def enviarMensaje(self, correoOrigen: str, correoDestino:str):
-    """
-    Tendriamos que implementar el envio de mensajes desde aca
-    Se envia el mensaje en param y al usuario encontrado se manda
-    """
-    
+
+  def enviarMensaje(self, correoOrigen: str, correoDestino:str, asunto, cuerpo, prioridad):
     servidorOrigen, usuarioOrigen = self._buscarServidorDeUsuario(correoOrigen)
     servidorDestino, usuarioDestino = self._buscarServidorDeUsuario(correoDestino)
     
     if(servidorOrigen == -1 or usuarioOrigen is None):
-      return f"No se encontro el remitente {correoOrigen} en ningún servidor."
+      print(f"No se encontro el remitente {correoOrigen} en ningun servidor.")
+      return None
     if(servidorDestino == -1 or usuarioDestino is None):
-      return f"No se encontro el destinatario {usuarioOrigen} en ningún servidor."
+      print(f"No se encontro el destinatario {correoDestino} en ningun servidor.")
+      return None
+    
+    nuevoMensaje = Mensaje(asunto, cuerpo, usuarioOrigen.correo, usuarioDestino.correo, prioridad)
+    
     if servidorOrigen == servidorDestino:
-      servidor = self.servidores[servidorOrigen]
-      return (f"Mensaje interno en {servidor.nombreServidor}: '{correoOrigen}' → '{correoDestino}'. Costo 0 ms (mismo servidor).")
-    
-    costo, camino = self._dijkstra(servidorOrigen, servidorDestino)
-    
-    if costo == float("inf") or not camino:
-      return "No hay conectividad entre los servidores de origen y destino."
-    
-    rutaNombres =  " → ".join(self.servidores[i].nombreServidor for i in camino)
-    return (f"Mensaje enviado: {correoOrigen} → {correoDestino}. Ruta: {rutaNombres}. Tiempo total: {int(costo)} ms.")
-  
+      costo_total = 0.0
+    else:
+      costo, camino = self._dijkstra(servidorOrigen, servidorDestino)
+      if costo == float("inf") or not camino:
+        print("No hay conectividad entre los servidores de origen y destino.")
+        return None
+      costo_total = costo
 
+    usuarioOrigen.agregarMensaje(nuevoMensaje, 'Enviados', True)
+    usuarioDestino.agregarMensaje(nuevoMensaje)
+
+    return costo_total
+  
+  def agregarUsuarioEnServidorAleatorio(self, usuario: Usuario):
+    servidor = random.choice(self.servidores)
+    servidor.agregarUsuarioAlServidor(usuario)
+    
+  def obtenerCorreosDestinatariosDisponibles(self):
+    correos: list[str] = []
+    for servidor in self.servidores:
+      for usuario in servidor.usuarios:
+        correos.append(usuario.correo)
+    return correos
+
+  def buscarUsuarioPorCorreo(self, correo: str):
+    usuarioEncontrado = None
+    servidorIndex = 0
+    while not isinstance(usuarioEncontrado, Usuario) and len(self.servidores) > servidorIndex:
+      servidor = self.servidores[servidorIndex]
+      usuarioEncontrado = servidor.buscarUsuarioPorCorreo(correo)
+      servidorIndex+=1
+    return usuarioEncontrado  
+    
 
 
     
