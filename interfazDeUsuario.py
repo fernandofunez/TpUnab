@@ -48,6 +48,7 @@ class InterfazDeUsuario:
     print("  3) Enviar mensaje")
     print("  4) Mover mensajes entre carpetas")
     print("  5) Crear filtro automatico")
+    print("  6) Mostrar mensajes de una carpeta por prioridad")
     print("  0) Cerrar Sesion")
     self._bloque("Ingrese el numero de opciun y presione 'Enter':")
       

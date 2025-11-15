@@ -32,7 +32,13 @@ class Mensaje():
   
   
   def __str__(self):
-       return f"De: {self.remitente} | Para: {self.destinatario} | Asunto: {self.asunto} | Cuerpo: {self.cuerpo}"
+    prioridades = ["URGENTE", "IMPORTANTE", "NORMAL", "BAJA", "MUY BAJA"]
+
+    if 1 <= self.prioridad <= 5:
+        prioridad_texto = prioridades[self.prioridad - 1]
+    else:
+        prioridad_texto = "DESCONOCIDA"  
+    return f"De: {self.remitente} | Para: {self.destinatario} | Asunto: {self.asunto} | Cuerpo: {self.cuerpo} | Prioridad: {prioridad_texto}"
      
   def __eq__(self, value):
     if not isinstance(value, Mensaje):

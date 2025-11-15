@@ -50,6 +50,7 @@ class SistemaEmail():
     self.servidores.agregarConexion(servidor2, servidor4, 12)
     self.servidores.agregarConexion(servidor1, servidor4, 26)
     self.servidores.agregarConexion(servidor1, servidor5, 35)
+    
 
       
   #Bucle para autenticacion del usuario    
@@ -71,7 +72,7 @@ class SistemaEmail():
   def _utilizarApp(self):
     while True:
       self.interfaz.mostrarMenuApp(self.usuarioAutenticado.nombre)
-      eleccion = solicitarInformacion('> ', int, [1, 2, 3, 4, 5, 0])
+      eleccion = solicitarInformacion('> ', int, [1, 2, 3, 4, 5, 6, 0])
       
       if(eleccion == 1):#Crear carpeta en mi usuario
         self.interfaz.mostrarEleccion(1)
@@ -85,9 +86,12 @@ class SistemaEmail():
       elif(eleccion == 4):#Mover un mensaje existente entre carpetas
         self._iniciarMoverMensaje()
         self.interfaz.mostrarEleccion(4)
-      elif eleccion == 5:
+      elif eleccion == 5:#Crear un filtro para una carpeta
         self.interfaz.mostrarEleccion(5)
         self._iniciarCrearFiltro()  
+      elif eleccion == 6:#Listar mensajes de una carpeta por prioridad
+        self.interfaz.mostrarEleccion(5)
+        self._listarMensajesDeCarpetaPorPrioridad()    
       elif(eleccion == 0):
         self.interfaz.mostrarEleccion(0)
         self._cerrarSesion()
@@ -134,15 +138,14 @@ class SistemaEmail():
     correoDestinatario = solicitarInformacion('Indique un correo destinatario: > ', str, destinatarios)
     asunto = solicitarInformacion('Asunto del mensaje: \n> ', str)
     cuerpo = solicitarInformacion('Cuerpo del mensaje: \n> ', str)
-    costoTotal = self.servidores.enviarMensaje(self.usuarioAutenticado.correo, correoDestinatario, asunto, cuerpo,  0)
+    prioridad = solicitarInformacion('Prioridad del mensaje (1-5): \n> ', int, [1, 2, 3, 4, 5])
+    costoTotal = self.servidores.enviarMensaje(self.usuarioAutenticado.correo, correoDestinatario, asunto, cuerpo,  prioridad)
   
     if costoTotal is not None:
       self.interfaz.mostrarAvisoMensajeEnviadoAUsuario(self.usuarioAutenticado.correo, correoDestinatario, costoTotal)
     else:
       print("No se pudo enviar el mensaje")  
 
-    
-  
   def _iniciarMoverMensaje(self):
     seleccion = self._obtenerMensajeNavegando()
     if seleccion is None: return
@@ -181,12 +184,30 @@ class SistemaEmail():
 
     self.usuarioAutenticado.agregarFiltro(propiedad, valor, carpetaDestino)
     print(f"\nFiltro creado correctamente: {propiedad} == '{valor}' → {carpetaDestino}")
-
-
-
+    
   
+  def _listarMensajesDeCarpetaPorPrioridad(self):
+    carpetas = self._obtenerNombreDeCarpetasDisponibles()
+    self.interfaz.mostrarListaCarpetas(carpetas)
+    carpetaSeleccionada = solicitarInformacion("Seleccione la carpeta para ver su contenido: > ", str, carpetas)
+    
+    carpeta = self.usuarioAutenticado.bandeja.buscar(carpetaSeleccionada)
+    
+    if carpeta is None:
+      print("La carpeta seleccionada no existe")
+      return
+    
+    print(f"\nMensajes en la carpeta '{carpeta.nombre}':")
   
-  
+    if len(carpeta.mensajes) == 0:
+        print("   (La carpeta está vacía)\n")
+        return
+      
+    carpeta.listarMensajesDeCarpeta()  
+    print("\n")
+    
+
+    
   
   def _obtenerMensajeNavegando(self):
     mensaje = None
@@ -247,4 +268,3 @@ class SistemaEmail():
     
   def _cerrarSesion(self):
     self.usuarioAutenticado = None  
-    
