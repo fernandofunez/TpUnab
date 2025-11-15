@@ -12,7 +12,8 @@ class ColaDeMensajes:
     
   def estaVacia(self):
     return self.cursor is None
-  
+
+  #Inserta un mensaje dentro de la cola segun la importancia
   def encolar(self, mensaje: Mensaje):
     nuevo = NodoMensaje(mensaje)
 
@@ -20,11 +21,13 @@ class ColaDeMensajes:
       self.cursor = nuevo
       return
 
+    #Inserta al comienzo de la lista el mensaje con mayor prioridad
     if mensaje.prioridad < self.cursor.dato.prioridad:
       nuevo.siguiente = self.cursor
       self.cursor = nuevo
       return
 
+    #Recorre la lista, manteniendo el orden por prioridad
     actual = self.cursor
     while (actual.siguiente is not None and
            actual.siguiente.dato.prioridad <= mensaje.prioridad):
@@ -33,6 +36,8 @@ class ColaDeMensajes:
     nuevo.siguiente = actual.siguiente
     actual.siguiente = nuevo
     
+  #Obtiene y elimina el mensaje mas importante
+  #Devuelve None si la cola esta vacia
   def desencolar(self):
     if self.cursor is None:
       return None
@@ -41,6 +46,8 @@ class ColaDeMensajes:
     self.cursor = self.cursor.siguiente
     return dato
 
+  #Elimina un mensaje especifico de la cola
+  #True si fue eliminado, False si no se encontro
   def eliminar(self, mensaje: Mensaje) -> bool:
     if self.cursor is None:
       return False
@@ -62,6 +69,7 @@ class ColaDeMensajes:
 
     return False
 
+  #Muestra todos los mensajes segun el orden de prioridad de la cola
   def listar(self):
     actual = self.cursor
     index = 1
@@ -85,6 +93,7 @@ class ColaDeMensajes:
       actual = actual.siguiente
     return contador    
   
+  #Permite obtener un mensaje usando un indice
   def __getitem__(self, index: int) -> Mensaje:
     if index < 0:
       raise IndexError("Indice negativo no soportado")

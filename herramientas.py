@@ -6,7 +6,7 @@ def hashClave(claveLimpia:str):
     return claveEncriptada
   
  
-#Solicita informacion al usuario con un mensaje y un tipo de dato especifico. Se pueden agregar opcioens validas 
+#Solicita informacion al usuario con un mensaje y un tipo de dato especifico. Se pueden agregar opciones validas 
 def solicitarInformacion(mensaje:str, tipoDeDato: type = str, opcionesValidas:list = None):
   if tipoDeDato not in (int, str):
     raise TypeError("Solo se aceptan tipos 'str' o 'int'")

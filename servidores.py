@@ -6,7 +6,7 @@ import random
 
 class Servidores:
   
-  def __init__(self):
+  def __init__(self): #Inicia los servidores
     self.servidores: list[ServidorCorreo] = []
     self.conexiones: list[list[float | None]] = self._generarMatrizCuadrada(0)
     
@@ -14,12 +14,14 @@ class Servidores:
   def _generarMatrizCuadrada(self, tamaño) -> list[list[None | float]]:
     return [[None]*tamaño for i in range(tamaño)]
   
+  #Devuelve el indice del servidor en la lista o -1 si no se encuentra
   def _indice(self, servidor:ServidorCorreo):
     for i, s in enumerate(self.servidores):
       if(s == servidor):
         return i
     return -1  
   
+  #Aumentan las conexiones para un nuevo servidor sin perder los datos anteriores
   def _expandirConexiones(self):
     cantidadServidoresViejo = len(self.conexiones)
     cantidadServidoresNuevo = cantidadServidoresViejo + 1
@@ -30,7 +32,7 @@ class Servidores:
         nuevasConexiones[fila][columna] = self.conexiones[fila][columna]
     self.conexiones = nuevasConexiones
   
-  
+  #Indica si un servidor ya esta registrado
   def existe(self, servidor:ServidorCorreo):
     return self._indice(servidor) != -1
   
@@ -41,6 +43,7 @@ class Servidores:
     self._expandirConexiones()
     return True
   
+  #Crea una conexion entre dos servidores usando un costo de conectividad indicado
   def agregarConexion(self, servidorA: ServidorCorreo, servidorB: ServidorCorreo, costoDeConectividad):
     if costoDeConectividad is None or costoDeConectividad <= 0:
       raise ValueError("El costo de conectividad debe ser positivo (ms)")
@@ -53,7 +56,7 @@ class Servidores:
     self.conexiones[indiceServidorA][indiceServidorB] = costoDeConectividad
     self.conexiones[indiceServidorB][indiceServidorA] = costoDeConectividad
   
-  def verConexiones(self):
+  def verConexiones(self): #Genera una representacion en texto de las conexiones entre servidores
     servidores = [servidor.nombreServidor for servidor in self.servidores]
     lineas = []
     header = "      " + " | ".join(f"{n[:6]:>6}" for n in servidores)
@@ -72,6 +75,7 @@ class Servidores:
         return indice, usuario
     return -1, None
   
+  #Obtiene el costo minimo y la ruta entre dos servidores (dijkstra)
   def _dijkstra(self, indiceServidorOrigen: int, indiceServidorDestino: int) -> tuple[float, list[int]]:
     cantidadServidores = len(self.servidores)
     servidoresVisitados = [False] * cantidadServidores
@@ -116,10 +120,12 @@ class Servidores:
     return costoAcumulado[indiceServidorDestino], rutaServidores
 
 
+#Localiza los servidores y usuarios involucrados en el envio
   def enviarMensaje(self, correoOrigen: str, correoDestino:str, asunto, cuerpo, prioridad):
     servidorOrigen, usuarioOrigen = self._buscarServidorDeUsuario(correoOrigen)
     servidorDestino, usuarioDestino = self._buscarServidorDeUsuario(correoDestino)
     
+    #Valida la existencia del remitente y destinatario
     if(servidorOrigen == -1 or usuarioOrigen is None):
       print(f"No se encontro el remitente {correoOrigen} en ningun servidor.")
       return None
@@ -131,13 +137,14 @@ class Servidores:
     
     if servidorOrigen == servidorDestino:
       costo_total = 0.0
-    else:
+    else: #Busca la ruta de menos entre servidores
       costo, camino = self._dijkstra(servidorOrigen, servidorDestino)
       if costo == float("inf") or not camino:
         print("No hay conectividad entre los servidores de origen y destino.")
         return None
       costo_total = costo
 
+    #Registra el mensaje en enviados y lo entrega al destinatario
     usuarioOrigen.agregarMensaje(nuevoMensaje, 'Enviados', True)
     usuarioDestino.agregarMensaje(nuevoMensaje)
 

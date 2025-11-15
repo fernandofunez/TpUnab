@@ -109,7 +109,7 @@ class SistemaEmail():
       self.servidores.agregarUsuarioEnServidorAleatorio(nuevoUsuario)
       self.interfaz.mostrarExitoRegistrarse()
       
-  def _iniciarSesion(self):
+  def _iniciarSesion(self): #Solicita credenciales y valida al usuario
     correo:str = solicitarInformacion('Ingrese correo de email: > ', str)
     clave = solicitarInformacion('Ingrese clave de usuario: > ', str)
     usuarioEncontrado = self.servidores.buscarUsuarioPorCorreo(correo)
@@ -122,7 +122,7 @@ class SistemaEmail():
   def _mostrarCarpetas(self):
     self.interfaz.mostrarArbolDeCarpetas(str(self.usuarioAutenticado.bandeja))
     
-  def _agregarNuevaCarpeta(self):
+  def _agregarNuevaCarpeta(self): #Crea una nueva carpeta dentro de otra y muestra el resultado
     carpetasDisponibles:list[str] = self._obtenerNombreDeCarpetasDisponibles()
     nuevaCarpeta:str = solicitarInformacion("Indique nombre de la nueva carpeta: > ", str)
     self.interfaz.mostrarListaCarpetas(carpetasDisponibles)
@@ -146,6 +146,7 @@ class SistemaEmail():
     else:
       print("No se pudo enviar el mensaje")  
 
+#Selecciona un mensaje y permite moverlo de carpeta
   def _iniciarMoverMensaje(self):
     seleccion = self._obtenerMensajeNavegando()
     if seleccion is None: return
@@ -164,7 +165,7 @@ class SistemaEmail():
       carpetaDestino.agregarMensaje(mensaje)
     return
   
-  def _iniciarCrearFiltro(self):
+  def _iniciarCrearFiltro(self): #Crea un filtro y lo agrega a la configuracion del usuario
     carpetas = self._obtenerNombreDeCarpetasDisponibles()
     self.interfaz.mostrarListaCarpetas(carpetas)
     carpetaDestino = solicitarInformacion("Carpeta destino del filtro: > ", str, carpetas)
@@ -186,11 +187,13 @@ class SistemaEmail():
     print(f"\nFiltro creado correctamente: {propiedad} == '{valor}' → {carpetaDestino}")
     
   
+  #Muestra las carpetas disponibles y lista los mensajes segun su prioridad
   def _listarMensajesDeCarpetaPorPrioridad(self):
     carpetas = self._obtenerNombreDeCarpetasDisponibles()
     self.interfaz.mostrarListaCarpetas(carpetas)
     carpetaSeleccionada = solicitarInformacion("Seleccione la carpeta para ver su contenido: > ", str, carpetas)
-    
+    #Solicita al usuario una carpeta valida
+
     carpeta = self.usuarioAutenticado.bandeja.buscar(carpetaSeleccionada)
     
     if carpeta is None:
@@ -209,18 +212,21 @@ class SistemaEmail():
 
     
   
+  #Navega entre carpetas y mensajes hasta que el usuario seleccione uno o salga
   def _obtenerMensajeNavegando(self):
     mensaje = None
     salir = False
     
     archivos = self.usuarioAutenticado.bandeja
-    carpetaActual = archivos.raiz.valor
+    carpetaActual = archivos.raiz.valor #Empieza desde la carpeta principal del usuario
     
+    #Obtiene la carpeta padre y las subcarpetas de la carpeta actual
     while not salir and not isinstance(mensaje, Mensaje): 
       carpetaPadre = archivos.obtenerCarpetaPadre(carpetaActual.nombre)
       carpetasHijas = archivos.obtenerCarpetasHijas(carpetaActual.nombre)
       mensajesEnCarpetaActual:list[Mensaje] = carpetaActual.mensajes
 
+      #Muestra en la interfaz la carpeta actual, opciones, subcarpetas y mensajes
       self.interfaz.mostrarUbicacionActual(carpetaActual.nombre)
         
       if carpetaPadre:
@@ -234,11 +240,12 @@ class SistemaEmail():
       accion = solicitarInformacion("Seleccione una accion > ", str).strip().lower()
 
       if accion == "x":
-        salir = True
+        salir = True #Permite salir
         self.interfaz.mostrarSalidaDeNavegacion()        
-      elif accion == ".." and carpetaPadre:
+      elif accion == ".." and carpetaPadre: #Permite retroceder a la carpeta padre
         carpetaActual = carpetaPadre
-            
+
+      #Si se ingresa un numero valido, se selecciona una subcarpeta  
       elif accion.isdigit():
         indice = int(accion) - 1
         if 0 <= indice < len(carpetasHijas):    
@@ -246,7 +253,7 @@ class SistemaEmail():
         else:
           self.interfaz.mostrarOpcionInvalida()
                 
-      elif accion.startswith("m"):
+      elif accion.startswith("m"): #Si la accion empieza con 'm' selecciona el mensaje por indice
         try:
           indice = int(accion[1:]) - 1 #'m12' -> 12
           if 0 <= indice < len(mensajesEnCarpetaActual):
@@ -257,9 +264,11 @@ class SistemaEmail():
         except ValueError:
           self.interfaz.mostrarOpcionInvalida()
       else:
-        self.interfaz.mostrarOpcionInvalida()
+        self.interfaz.mostrarOpcionInvalida() #Una accion no valida muestra un error
     return {"mensaje": mensaje, "carpeta": carpetaActual} if mensaje else None
+    #Devuelve un diccionario con el mensaje seleccionado y la carpeta actual
   
+  #Devuelve una lista con los nombres de todas las carpetas de la bandeja del usuario
   def _obtenerNombreDeCarpetasDisponibles(self):
     carpetasDisponibles:list[str] = []
     for carpeta in self.usuarioAutenticado.bandeja:

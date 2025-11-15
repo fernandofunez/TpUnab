@@ -4,7 +4,7 @@ class ServidorCorreo():
   def __init__(self, nombreServidor):
     self.nombreServidor = nombreServidor
     self.usuarios:list[Usuario] = []
-  
+  #Inicia el servidor con un nombre y una lista vacia de usuarios
   
   def agregarUsuarioAlServidor(self, usuario:Usuario):
     self.usuarios.append(usuario)

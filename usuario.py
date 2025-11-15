@@ -20,7 +20,7 @@ class Usuario():
     self.bandeja.insertar(Carpeta('Enviados'), 'Correo')
     self.bandeja.insertar(Carpeta('Borradores'), 'Correo')
   
-  #Agrea un Mensaje a la carpeta destino
+  #Agrega un mensaje a la carpeta destino
   def agregarMensaje(self, mensaje:Mensaje, nombreCarpetaDestino:str = 'Bandeja de entrada', evitarFiltro = False):
     carpetaFiltrada = self._aplicarFiltros(mensaje)
     if carpetaFiltrada is not None and not evitarFiltro:
@@ -34,6 +34,7 @@ class Usuario():
     
     return False
   
+  #Agrega un nuevo filtro indicando que propiedad evaluar y el destino del mensaje
   def agregarFiltro(self, propiedad:str, valor, carpetaDestino:str):
     filtro = {
       "propiedad": propiedad,
@@ -42,17 +43,18 @@ class Usuario():
     }
     self._filtros.append(filtro)
     
+  #Recorre los filtros para decidir a que carpeta va el mensaje
   def _aplicarFiltros(self, mensaje:Mensaje):
     for filtro in self._filtros:
       propiedad = filtro["propiedad"]
       valor = filtro["valor"]
 
     if getattr(mensaje, propiedad) == valor:
-      return filtro["destino"]
+      return filtro["destino"] #Devuelve la carpeta de destino si el mensaje coincide con el filtro
 
     return None
     
-  #Guarda el mensaje en la carpetas 'enviados'
+  #Guarda el mensaje en la carpeta 'enviados'
   def agregarMensajeEnviado(self, mensaje:Mensaje):
     NOMBRE_CARPETA_ENVIADOS = "Enviados"
     carpetaDestino = self.bandeja.buscar(NOMBRE_CARPETA_ENVIADOS)
@@ -61,6 +63,7 @@ class Usuario():
       return True
     return False
   
+  #Lista los mensajes de la carpeta seleccionada, lanza un error si no existe
   def listarContenidoDeCarpeta(self, nombreCarpeta):
     carpeta = self.bandeja.buscar(nombreCarpeta)
     if not isinstance(carpeta, Carpeta): raise FileNotFoundError("Carpeta no encontrada")
@@ -73,7 +76,7 @@ class Usuario():
   def listarMensajePrioridad(self):
     pass
   
-  
+  #Agrega una nueva carpeta hija a la carpeta padre
   def agregarNuevaCarpeta(self, nombreCarpetaPadre, nuevaCarpetaHija:Carpeta):
     if not isinstance(nuevaCarpetaHija, Carpeta): raise TypeError("nuevaCarpetaHija espera un tipo de dato Carpeta")
     exito = self.bandeja.insertar(nuevaCarpetaHija, nombreCarpetaPadre)
