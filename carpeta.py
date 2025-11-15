@@ -1,27 +1,20 @@
 from mensaje import Mensaje
+from colaDeMensajes import ColaDeMensajes
 
 class Carpeta():
   
   def __init__(self, nombre):
-    self.nombre:str = nombre
-    self.mensajes:list[Mensaje] = []
+    self.nombre: str = nombre
+    self.mensajes: ColaDeMensajes = ColaDeMensajes()
   
-  #Agrega una mensaje a la carpeta
   def agregarMensaje(self, mensaje: Mensaje):
-    self.mensajes.append(mensaje)
+    self.mensajes.encolar(mensaje)
   
-  #Lista todos los mensajes de la carpeta
   def listarMensajesDeCarpeta(self):
-    index = 0
-    for mensaje in self.mensajes:
-      print(f"{index+1}-{str(mensaje)}")
-      index+=1
+    self.mensajes.listar()
   
-  def eliminarMensaje(self, mensaje:Mensaje):
-    if mensaje in self.mensajes:
-      self.mensajes.remove(mensaje)
-      return True
-    return False    
+  def eliminarMensaje(self, mensaje: Mensaje):
+    return self.mensajes.eliminar(mensaje)
   
   def __str__(self):
     return self.nombre
