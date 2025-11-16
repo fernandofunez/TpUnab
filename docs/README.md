@@ -207,3 +207,4 @@ Utilizamos una clase principal llamada `SistemaEmail` para coordinar todos los e
 **Materia**: estructura de Datos  
 **Profesor**: Bianco, Leonardo Angel  
 **Entrega**:   15 - 11 - 2025
+** Grupo ** : 22
